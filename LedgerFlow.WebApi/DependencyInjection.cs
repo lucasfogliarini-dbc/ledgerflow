@@ -1,10 +1,7 @@
 ﻿using LedgerFlow.WebApi;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 using System.Reflection;
-using System.Security.Claims;
 using System.Text.Json;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -13,7 +10,7 @@ public static class DependencyInjection
 {
     public static void AddWebApi(this WebApplicationBuilder builder)
     {
-        builder.Services.AddApplication();
+        builder.Services.AddApplication(builder.Configuration);
         //builder.Services.AddControllers();
         builder.Services.AddEndpoints();
         builder.AddHealthChecks();
@@ -26,7 +23,7 @@ public static class DependencyInjection
         app.UseOutputCache();//precisa ser antes do MapEndpoints
         //app.MapControllers();
         app.MapEndpoints();
-        //app.MapHealthChecks();
+        app.MapHealthChecks();
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
@@ -61,7 +58,7 @@ public static class DependencyInjection
     }
     private static void AddHealthChecks(this WebApplicationBuilder builder)
     {
-        //builder.Services.AddLedgerFlowDbContextCheck();
+        builder.Services.AddLedgerFlowDbContextCheck();
     }
     private static void MapHealthChecks(this WebApplication app)
     {

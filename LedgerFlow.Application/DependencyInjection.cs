@@ -1,14 +1,16 @@
 ﻿using LedgerFlow;
 using LedgerFlow.Application;
+using Microsoft.Extensions.Configuration;
 using System.Reflection;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class DependencyInjection
 {
-    public static void AddApplication(this IServiceCollection services)
+    public static void AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddHandlers(Assembly.GetExecutingAssembly());
+        services.AddInfrastructure(configuration);
     }
 
     private static IServiceCollection AddHandlers(this IServiceCollection services, Assembly assembly)
