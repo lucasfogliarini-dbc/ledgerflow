@@ -11,8 +11,8 @@ public class LedgerSummaryUnitTests
         var debit = Transaction.CreateDebit(100m, "Compra de material");
 
         // Act
-        summary.AddTransaction(credit);
-        summary.AddTransaction(debit);
+        summary.AddTransaction(credit.Value);
+        summary.AddTransaction(debit.Value);
 
         // Assert
         Assert.Equal(2, summary.Transactions.Count);
@@ -39,9 +39,9 @@ public class LedgerSummaryUnitTests
 
         var transactions = new List<Transaction>
         {
-            Transaction.CreateCredit(100m, "Venda 1"),
-            Transaction.CreateCredit(50m, "Venda 2"),
-            Transaction.CreateDebit(30m, "Compra 1")
+            Transaction.CreateCredit(100m, "Venda 1").Value,
+            Transaction.CreateCredit(50m, "Venda 2").Value,
+            Transaction.CreateDebit(30m, "Compra 1").Value
         };
 
         // Act

@@ -8,10 +8,13 @@ public class TransactionUnitTests
     [InlineData(9999.99, "Venda corporativa")]
     public void CreateCredit_ShouldCreateTransaction_WhenValuesAreValid(decimal value, string description)
     {
-        // Arrange e Act
-        var transaction = Transaction.CreateCredit(value, description);
+        // Act
+        var result = Transaction.CreateCredit(value, description);
 
         // Assert
+        Assert.True(result.IsSuccess);
+        var transaction = result.Value;
+
         Assert.NotNull(transaction);
         Assert.Equal(TransactionType.Credit, transaction.Type);
         Assert.Equal(value, transaction.Value);
@@ -25,10 +28,13 @@ public class TransactionUnitTests
     [InlineData(999.00, "Pagamento de fornecedor")]
     public void CreateDebit_ShouldCreateTransaction_WhenValuesAreValid(decimal value, string description)
     {
-        // Arrange e Act
-        var transaction = Transaction.CreateDebit(value, description);
+        // Act
+        var result = Transaction.CreateDebit(value, description);
 
         // Assert
+        Assert.True(result.IsSuccess);
+        var transaction = result.Value;
+
         Assert.NotNull(transaction);
         Assert.Equal(TransactionType.Debit, transaction.Type);
         Assert.Equal(value, transaction.Value);
@@ -36,41 +42,41 @@ public class TransactionUnitTests
         Assert.True((DateTime.Now - transaction.CreatedAt).TotalSeconds < 2);
     }
 
-    [Theory(DisplayName = "Criação de crédito não deve criar transação quando valores forem inválidos")]
+    [Theory(DisplayName = "Criação de crédito deve falhar quando valor for inválido")]
     [InlineData(0)]
     [InlineData(-500)]
-    public void CreateCredit_ShouldThrowArgumentException_WhenValueIsInvalid(decimal value)
+    public void CreateCredit_ShouldFail_WhenValueIsInvalid(decimal value)
     {
-        // Arrange
-        string description = "Crédito inválido";
+        // Act
+        var result = Transaction.CreateCredit(value, "Crédito inválido");
 
-        // Act e Assert
-        var ex = Assert.Throws<ArgumentException>(() => Transaction.CreateCredit(value, description));
-        Assert.Contains("maior que zero", ex.Message);
+        // Assert
+        Assert.True(result.IsFailure);
+        Assert.Contains("maior que zero", result.Error);
     }
 
-    [Theory(DisplayName = "Criação de crédito não deve criar transação quando valores forem inválidos")]
+    [Theory(DisplayName = "Criação de débito deve falhar quando valor for inválido")]
     [InlineData(0)]
     [InlineData(-1)]
-    public void CreateDebit_ShouldThrowArgumentException_WhenValueIsInvalid(decimal value)
+    public void CreateDebit_ShouldFail_WhenValueIsInvalid(decimal value)
     {
-        // Arrange
-        string description = "Débito inválido";
+        // Act
+        var result = Transaction.CreateDebit(value, "Débito inválido");
 
-        // Act & Assert
-        var ex = Assert.Throws<ArgumentException>(() => Transaction.CreateDebit(value, description));
-        Assert.Contains("maior que zero", ex.Message);
+        // Assert
+        Assert.True(result.IsFailure);
+        Assert.Contains("maior que zero", result.Error);
     }
 
-    [Theory(DisplayName = "ToString Deve Retornar String Formatada Corretamente")]
+    [Theory(DisplayName = "ToString deve retornar string formatada corretamente")]
     [InlineData(250.75, "Venda via PIX", TransactionType.Credit)]
     [InlineData(99.90, "Compra de insumos", TransactionType.Debit)]
     public void ToString_ShouldReturnFormattedString_WhenTransactionIsValid(decimal value, string description, TransactionType type)
     {
         // Arrange
         var transaction = type == TransactionType.Credit
-            ? Transaction.CreateCredit(value, description)
-            : Transaction.CreateDebit(value, description);
+            ? Transaction.CreateCredit(value, description).Value
+            : Transaction.CreateDebit(value, description).Value;
 
         // Act
         string result = transaction.ToString();

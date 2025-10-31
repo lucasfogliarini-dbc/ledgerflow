@@ -1,6 +1,8 @@
-﻿namespace LedgerFlow;
+﻿using CSharpFunctionalExtensions;
 
-public class Transaction : IAuditable
+namespace LedgerFlow;
+
+public class Transaction : Entity, IAuditable
 {
     public TransactionType Type { get; }
     public decimal Value { get; }
@@ -18,10 +20,10 @@ public class Transaction : IAuditable
     /// <summary>
     /// Cria uma transação de crédito.
     /// </summary>
-    public static Transaction CreateCredit(decimal value, string description)
+    public static Result<Transaction> CreateCredit(decimal value, string description)
     {
         if (value <= 0)
-            throw new ArgumentException("O valor do crédito deve ser maior que zero.", nameof(value));
+            return Result.Failure<Transaction>("O valor do crédito deve ser maior que zero.");
 
         return new Transaction(
             type: TransactionType.Credit,
@@ -33,10 +35,10 @@ public class Transaction : IAuditable
     /// <summary>
     /// Cria uma transação de débito.
     /// </summary>
-    public static Transaction CreateDebit(decimal value, string description)
+    public static Result<Transaction> CreateDebit(decimal value, string description)
     {
         if (value <= 0)
-            throw new ArgumentException("O valor do débito deve ser maior que zero.", nameof(value));
+            return Result.Failure<Transaction>("O valor do débito deve ser maior que zero.");
 
         return new Transaction(
             type: TransactionType.Debit,
