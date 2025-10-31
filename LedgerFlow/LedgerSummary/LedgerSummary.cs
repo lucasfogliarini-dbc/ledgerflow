@@ -1,12 +1,14 @@
 ﻿namespace LedgerFlow;
 
-public class LedgerSummary
+public class LedgerSummary : AggregateRoot, IAuditable
 {
-    public DateTime CreatedAt { get; } = DateTime.UtcNow;
     public IList<Transaction> Transactions { get; private set; } = [];
     public decimal TotalCredits { get; private set; }
     public decimal TotalDebits { get; private set; }
     public decimal Balance => TotalCredits - TotalDebits;
+
+    public DateTime CreatedAt { get; private set; } = DateTime.Now;
+    public DateTime UpdatedAt { get; private set; } = DateTime.Now;
 
     public void AddTransaction(Transaction transaction)
     {

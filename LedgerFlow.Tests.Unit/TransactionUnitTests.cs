@@ -16,8 +16,7 @@ public class TransactionUnitTests
         Assert.Equal(TransactionType.Credit, transaction.Type);
         Assert.Equal(value, transaction.Value);
         Assert.Equal(description, transaction.Description);
-        Assert.NotEqual(Guid.Empty, transaction.Id);
-        Assert.True((DateTime.UtcNow - transaction.CreatedAt).TotalSeconds < 2);
+        Assert.True((DateTime.Now - transaction.CreatedAt).TotalSeconds < 2);
     }
 
     [Theory(DisplayName = "Criação de débito deve criar transação corretamente quando valores forem válidos")]
@@ -34,8 +33,7 @@ public class TransactionUnitTests
         Assert.Equal(TransactionType.Debit, transaction.Type);
         Assert.Equal(value, transaction.Value);
         Assert.Equal(description, transaction.Description);
-        Assert.NotEqual(Guid.Empty, transaction.Id);
-        Assert.True((DateTime.UtcNow - transaction.CreatedAt).TotalSeconds < 2);
+        Assert.True((DateTime.Now - transaction.CreatedAt).TotalSeconds < 2);
     }
 
     [Theory(DisplayName = "Criação de crédito não deve criar transação quando valores forem inválidos")]
@@ -81,6 +79,6 @@ public class TransactionUnitTests
         Assert.Contains(type.ToString(), result);
         Assert.Contains(description, result);
         Assert.Contains(value.ToString("F2").Replace(".", ","), result);
-        Assert.Contains(DateTime.UtcNow.Year.ToString(), result);
+        Assert.Contains(DateTime.Now.Year.ToString(), result);
     }
 }

@@ -1,20 +1,18 @@
 ﻿namespace LedgerFlow;
 
-public class Transaction
+public class Transaction : IAuditable
 {
-    public Guid Id { get; }
     public TransactionType Type { get; }
     public decimal Value { get; }
     public string Description { get; }
-    public DateTime CreatedAt { get; }
+    public DateTime CreatedAt { get; private set; } = DateTime.Now;
+    public DateTime UpdatedAt { get; private set; } = DateTime.Now;
 
-    private Transaction(Guid id, TransactionType type, decimal value, string description, DateTime createdAt)
+    private Transaction(TransactionType type, decimal value, string description)
     {
-        Id = id;
         Type = type;
         Value = value;
         Description = description;
-        CreatedAt = createdAt;
     }
 
     /// <summary>
@@ -26,11 +24,9 @@ public class Transaction
             throw new ArgumentException("O valor do crédito deve ser maior que zero.", nameof(value));
 
         return new Transaction(
-            id: Guid.NewGuid(),
             type: TransactionType.Credit,
             value: value,
-            description: description,
-            createdAt: DateTime.UtcNow
+            description: description
         );
     }
 
@@ -43,11 +39,9 @@ public class Transaction
             throw new ArgumentException("O valor do débito deve ser maior que zero.", nameof(value));
 
         return new Transaction(
-            id: Guid.NewGuid(),
             type: TransactionType.Debit,
             value: value,
-            description: description,
-            createdAt: DateTime.UtcNow
+            description: description
         );
     }
 
