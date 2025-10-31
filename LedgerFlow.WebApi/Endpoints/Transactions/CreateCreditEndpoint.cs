@@ -1,7 +1,7 @@
 using LedgerFlow.Application.Transactions;
 using LedgerFlow.Application;
 
-namespace LedgerFlow.WebApi.Endpoints.Transactions;
+namespace LedgerFlow.WebApi.Endpoints;
 
 internal sealed class CreateCreditEndpoint : IEndpoint
 {

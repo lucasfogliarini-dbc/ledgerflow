@@ -6,7 +6,7 @@ internal class TransactionRepository(LedgerFlowDbContext dbContext) : Repository
 {
     public void Add(Transaction transaction)
     {
-        Add(transaction);
+        dbContext.Add(transaction);
     }
 
     public async Task<IEnumerable<Transaction>> GetTransactionsAsync(DateTime referenceDate, CancellationToken cancellationToken = default)

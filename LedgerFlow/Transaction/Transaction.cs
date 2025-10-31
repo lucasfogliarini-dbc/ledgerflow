@@ -4,18 +4,19 @@ namespace LedgerFlow;
 
 public class Transaction : Entity, IAuditable
 {
-    public TransactionType Type { get; }
-    public decimal Value { get; }
-    public string Description { get; }
-    public DateTime CreatedAt { get; private set; } = DateTime.Now;
-    public DateTime UpdatedAt { get; private set; } = DateTime.Now;
-
+    public Transaction() { }
     private Transaction(TransactionType type, decimal value, string description)
     {
         Type = type;
         Value = value;
         Description = description;
     }
+
+    public TransactionType Type { get; }
+    public decimal Value { get; }
+    public string Description { get; }
+    public DateTime CreatedAt { get; private set; } = DateTime.Now;
+    public DateTime UpdatedAt { get; private set; } = DateTime.Now;    
 
     /// <summary>
     /// Cria uma transação de crédito.

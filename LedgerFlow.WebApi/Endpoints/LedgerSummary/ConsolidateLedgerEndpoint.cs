@@ -1,12 +1,12 @@
 using LedgerFlow.Application;
 using LedgerFlow.Application.LedgerSummaries;
 
-namespace LedgerFlow.WebApi.Endpoints.Transactions;
+namespace LedgerFlow.WebApi.Endpoints;
 
 internal sealed class ConsolidateLedgerEndpoint : IEndpoint
 {
     public async Task<IResult> ConsolidateLedgerAsync(
-        ConsolidateLedgerCommandRequest request,
+        ConsolidateLedgerRequest request,
         ICommandHandler<ConsolidateLedgerCommand> handler,
         CancellationToken cancellationToken = default)
     {
@@ -28,4 +28,4 @@ internal sealed class ConsolidateLedgerEndpoint : IEndpoint
     }
 }
 
-internal sealed record ConsolidateLedgerCommandRequest(DateTime ReferenceDate);
+internal sealed record ConsolidateLedgerRequest(DateTime ReferenceDate);
