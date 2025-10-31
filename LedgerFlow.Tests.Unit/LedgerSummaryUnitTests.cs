@@ -2,11 +2,10 @@
 
 public class LedgerSummaryUnitTests
 {
-    [Fact(DisplayName = "AddTransaction_DeveAdicionarTransacaoCorretamente_QuandoTransacaoForValida")]
+    [Fact(DisplayName = "Adicionar transações deve adicionar uma transação quando lista for nula")]
     public void AddTransaction_ShouldAddTransaction_WhenTransactionIsValid()
     {
         // Arrange
-        var merchantId = Guid.NewGuid();
         var summary = new LedgerSummary();
         var credit = Transaction.CreateCredit(500m, "Venda no cartão");
         var debit = Transaction.CreateDebit(100m, "Compra de material");
@@ -19,12 +18,11 @@ public class LedgerSummaryUnitTests
         Assert.Equal(2, summary.Transactions.Count);
         Assert.Equal(500m, summary.TotalCredits);
         Assert.Equal(100m, summary.TotalDebits);
-        Assert.Equal(400m, summary.FinalBalance);
+        Assert.Equal(400m, summary.Balance);
     }
 
-    [Theory(DisplayName = "AddTransaction_DeveLancarArgumentNullException_QuandoTransacaoForNula")]
-    [InlineData(true)]
-    public void AddTransaction_ShouldThrowArgumentNullException_WhenTransactionIsNull(bool dummy)
+    [Fact(DisplayName = "Adicionar transações deve adicionar múltiplas transações quando lista for nula")]
+    public void AddTransaction_ShouldThrowArgumentNullException_WhenTransactionIsNull()
     {
         // Arrange
         var summary = new LedgerSummary();
@@ -33,11 +31,10 @@ public class LedgerSummaryUnitTests
         Assert.Throws<ArgumentNullException>(() => summary.AddTransaction(null!));
     }
 
-    [Fact(DisplayName = "AddTransactions_DeveAdicionarVariasTransacoesCorretamente_QuandoListaForValida")]
+    [Fact(DisplayName = "Adicionar transações deve adicionar múltiplas transações quando lista for válida")]
     public void AddTransactions_ShouldAddMultipleTransactions_WhenListIsValid()
     {
         // Arrange
-        var merchantId = Guid.NewGuid();
         var summary = new LedgerSummary();
 
         var transactions = new List<Transaction>
@@ -54,7 +51,7 @@ public class LedgerSummaryUnitTests
         Assert.Equal(3, summary.Transactions.Count);
         Assert.Equal(150m, summary.TotalCredits);
         Assert.Equal(30m, summary.TotalDebits);
-        Assert.Equal(120m, summary.FinalBalance);
+        Assert.Equal(120m, summary.Balance);
     }
 
     [Fact(DisplayName = "Adicionar transações deve lançar ArgumentNullException quando a lista for nula")]

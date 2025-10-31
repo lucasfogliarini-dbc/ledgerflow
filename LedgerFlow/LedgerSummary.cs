@@ -6,7 +6,7 @@ public class LedgerSummary
     public IList<Transaction> Transactions { get; private set; } = [];
     public decimal TotalCredits { get; private set; }
     public decimal TotalDebits { get; private set; }
-    public decimal FinalBalance => TotalCredits - TotalDebits;
+    public decimal Balance => TotalCredits - TotalDebits;
 
     public void AddTransaction(Transaction transaction)
     {
@@ -30,5 +30,5 @@ public class LedgerSummary
             AddTransaction(t);
     }
 
-    public override string ToString() => $"Consolidado para {CreatedAt:yyyy-MM-dd}: +{TotalCredits:C} -{TotalDebits:C} = {FinalBalance:C}";
+    public override string ToString() => $"Consolidado para {CreatedAt:yyyy-MM-dd}: +{TotalCredits:C} -{TotalDebits:C} = {Balance:C}";
 }
