@@ -20,9 +20,9 @@ internal sealed class GetLedgerSummaryEndpoint : IEndpoint
         return Results.Ok(result.Value);
     }
 
-    public void MapEndpoint(IEndpointRouteBuilder app)
+    public IEndpointConventionBuilder MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet($"{Routes.LedgerSummaries}", GetLedgerSummaryAsync)
+        return app.MapGet($"{Routes.LedgerSummaries}", GetLedgerSummaryAsync)
            .WithTags(Routes.LedgerSummaries)
            .Produces(StatusCodes.Status200OK)
            .Produces(StatusCodes.Status400BadRequest);

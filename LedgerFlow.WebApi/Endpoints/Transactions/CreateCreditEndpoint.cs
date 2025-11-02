@@ -19,9 +19,9 @@ internal sealed class CreateCreditEndpoint : IEndpoint
         return Results.Ok(result.Value);
     }
 
-    public void MapEndpoint(IEndpointRouteBuilder app)
+    public IEndpointConventionBuilder MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost($"{Routes.Transactions}/credit", CreateCreditAsync)
+        return app.MapPost($"{Routes.Transactions}/credit", CreateCreditAsync)
            .WithTags(Routes.Transactions)
            .Produces(StatusCodes.Status200OK)
            .Produces(StatusCodes.Status400BadRequest)

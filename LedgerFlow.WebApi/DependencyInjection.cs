@@ -1,4 +1,5 @@
 ﻿using LedgerFlow.WebApi;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Reflection;
@@ -11,24 +12,24 @@ public static class DependencyInjection
     public static void AddWebApi(this WebApplicationBuilder builder)
     {
         builder.Services.AddApplication(builder.Configuration);
-        //builder.Services.AddControllers();
         builder.Services.AddEndpoints();
         builder.AddHealthChecks();
         builder.Services.AddProblemDetails();
         builder.AddOutputCache();
         builder.Services.AddOpenApi();
+        builder.AddJwtBearerAuthentication();
     }
     public static void UseWebApi(this WebApplication app)
     {
         app.UseOutputCache();//precisa ser antes do MapEndpoints
-        //app.MapControllers();
         app.MapEndpoints();
         app.MapHealthChecks();
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
         }
-        //app.UseAuthorization();
+        app.UseAuthentication();
+        app.UseAuthorization();
     }
 
     public static IServiceCollection AddEndpoints(this IServiceCollection services)
@@ -51,7 +52,7 @@ public static class DependencyInjection
 
         foreach (IEndpoint endpoint in endpoints)
         {
-            endpoint.MapEndpoint(app);
+            endpoint.MapEndpoint(app).RequireAuthorization();
         }
 
         return app;
@@ -105,4 +106,22 @@ public static class DependencyInjection
             });
         });
     }
+    private static void AddJwtBearerAuthentication(this WebApplicationBuilder builder)
+    {
+        var jwtSection = builder.Configuration.GetSection(nameof(JwtSettings));
+        builder.Services.Configure<JwtSettings>(jwtSection);
+
+        var jwtSettings = jwtSection.Get<JwtSettings>()!;
+
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+         .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+         {
+             options.Authority = jwtSettings.Authority;
+             options.Audience = jwtSettings.Audience;
+             options.RequireHttpsMetadata = false;
+             options.SaveToken = true;
+         });
+        builder.Services.AddAuthorization();
+    }
+    public record JwtSettings(string Authority, string Audience);
 }

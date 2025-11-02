@@ -19,9 +19,9 @@ internal sealed class ConsolidateLedgerEndpoint : IEndpoint
         return Results.Ok();
     }
 
-    public void MapEndpoint(IEndpointRouteBuilder app)
+    public IEndpointConventionBuilder MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost($"{Routes.LedgerSummaries}/consolidate", ConsolidateLedgerAsync)
+        return app.MapPost($"{Routes.LedgerSummaries}/consolidate", ConsolidateLedgerAsync)
            .WithTags(Routes.LedgerSummaries)
            .Produces(StatusCodes.Status200OK)
            .Produces(StatusCodes.Status400BadRequest);
