@@ -16,7 +16,7 @@ public class Transaction : Entity, IAuditable
     public decimal Value { get; private set; }
     public string Description { get; private set; }
     public DateTime CreatedAt { get; private set; } = DateTime.Now;
-    public DateTime UpdatedAt { get; private set; } = DateTime.Now;    
+    public DateTime? UpdatedAt { get; private set; } = DateTime.Now;    
 
     /// <summary>
     /// Cria uma transação de crédito.

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LedgerFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(LedgerFlowDbContext))]
-    [Migration("20251103030747_InitialSchema")]
-    partial class InitialSchema
+    [Migration("20251103181056_InitDatabase")]
+    partial class InitDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,12 +40,14 @@ namespace LedgerFlow.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("TotalCredits")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("TotalDebits")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -68,35 +70,49 @@ namespace LedgerFlow.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("LedgerSummaryId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Value")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LedgerSummaryId");
-
                     b.ToTable("Transaction");
                 });
 
-            modelBuilder.Entity("LedgerFlow.Transaction", b =>
+            modelBuilder.Entity("LedgerSummaryTransaction", b =>
                 {
-                    b.HasOne("LedgerFlow.LedgerSummary", null)
-                        .WithMany("Transactions")
-                        .HasForeignKey("LedgerSummaryId");
+                    b.Property<int>("LedgerSummaryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TransactionsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("LedgerSummaryId", "TransactionsId");
+
+                    b.HasIndex("TransactionsId");
+
+                    b.ToTable("LedgerSummaryTransaction");
                 });
 
-            modelBuilder.Entity("LedgerFlow.LedgerSummary", b =>
+            modelBuilder.Entity("LedgerSummaryTransaction", b =>
                 {
-                    b.Navigation("Transactions");
+                    b.HasOne("LedgerFlow.LedgerSummary", null)
+                        .WithMany()
+                        .HasForeignKey("LedgerSummaryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LedgerFlow.Transaction", null)
+                        .WithMany()
+                        .HasForeignKey("TransactionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

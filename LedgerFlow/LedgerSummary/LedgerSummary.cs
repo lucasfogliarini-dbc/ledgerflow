@@ -11,7 +11,7 @@ public class LedgerSummary(DateTime referenceDate) : AggregateRoot, IAuditable
     public decimal Balance => TotalCredits - TotalDebits;    
 
     public DateTime CreatedAt { get; private set; } = DateTime.Now;
-    public DateTime UpdatedAt { get; private set; } = DateTime.Now;
+    public DateTime? UpdatedAt { get; private set; } = DateTime.Now;
 
     public void AddTransaction(Transaction transaction)
     {
