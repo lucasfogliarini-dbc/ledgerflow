@@ -1,6 +1,6 @@
 ﻿# LedgerFlow
 
-LedgerFlow é uma solução desenvolvida em .NET 8 para controle e consolidação de lançamentos financeiros diários (débitos e créditos). O projeto foi criado com foco em escalabilidade, resiliência e boas práticas de arquitetura de software — aplicando princípios de DDD, separação de contextos e testes automatizados.
+LedgerFlow é uma solução desenvolvida em ASP.NET 9 para controle e consolidação de lançamentos financeiros diários (débitos e créditos). O projeto foi criado com foco em escalabilidade, resiliência e boas práticas de arquitetura de software — aplicando princípios de DDD, separação de contextos e testes automatizados.
 
 A arquitetura contempla dois principais serviços:
 
@@ -47,10 +47,10 @@ Isso criará o schema e as tabelas necessárias no banco de dados configurado vi
 
 O sistema utiliza o **Keycloak** como provedor de identidade.
 
-1. Acesse a interface administrativa do Keycloak [Master Admin Console](http://localhost:2000/admin).
+1. Acesse a interface administrativa do Keycloak [Master Admin Console](http://localhost:2000/admin) com usuário __admin__ e senha **admin**
 2. Vá até **Manage realms → Create Realm → Browse Resource file**.
-3. Faça upload do arquivo `ledgerflow-realm-export.json` fornecido com o projeto.
-4. Entre no [Ledger Admin Console](http://localhost:2000/admin/ledgerflow/console) com usuário usuário **admin** e senha **admin** para testar ou customizar algo a mais.
+3. Faça upload do arquivo `ledgerflow-realm-export.json`(fornecido com o projeto) e crie o Ledgerflow Realm
+4. Entre no [Ledgerflow Admin Console](http://localhost:2000/admin/ledgerflow/console) com usuário **admin** e senha **admin** para testar ou configurar algo a mais.
 5. Entre em [clients](http://localhost:2000/admin/ledgerflow/console/#/ledgerflow/clients) e confirme a criação do client público (legderflow).
 
 ---
@@ -123,7 +123,7 @@ Os resultados indicam latência média, throughput e taxa de erros — essenciai
 
 A solução foi desenhada seguindo princípios de **Domain-Driven Design (DDD)** e **Clean Architecture**, com clara separação entre camadas:
 
-* **LedgerFlow** — contém entidades, agregados, eventos de domínio e regras de negócio.
+* **LedgerFlow** — projeto de domínio, contém entidades, agregados, eventos de domínio e regras de negócio.
 * **LedgerFlow.Infrastructure** — abstrações de persistência, mapeamentos e contexto EF Core.
 * **LedgerFlow.Application** — implementa os casos de uso da aplicação, comandos, consultas e orquestração das regras de negócio.
 * **LedgerFlow.Transactions.WebApi** — expõe os endpoints responsáveis pelo registro e consulta de transações (créditos e débitos).

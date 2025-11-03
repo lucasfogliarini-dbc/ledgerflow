@@ -82,6 +82,28 @@
         ]
       },
       "requiredActions": []
+    },
+    {
+      "username": "lucasfogliarini",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Lucas",
+      "lastName": "Fogliarini",
+      "email": "lucasfogliarini@gmail.com",
+      "federatedIdentities": [
+        {
+          "identityProvider": "google",
+          "userId": "103345722380657378590",
+          "userName": "lucasfogliarini@gmail.com"
+        }
+      ],
+      "realmRoles": [ "default-roles-ledgerflow-realm", "admin" ],
+      "clientRoles": {
+        "realm-management": [
+          "realm-admin"
+        ]
+      },
+      "requiredActions": []
     }
   ],
   "id": "42298141-e494-4af0-9533-70f08da9bd5f",
@@ -1044,7 +1066,7 @@
       "hideOnLogin": false,
       "config": {
         "syncMode": "LEGACY",
-        "clientSecret": "**********",
+        "clientSecret": "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",
         "clientId": "1037813106930-q4ij8vcn1i0k6a2lo4c709jnljg3j261.apps.googleusercontent.com"
       }
     }
