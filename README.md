@@ -65,6 +65,13 @@ Cenário: Obter Saldos Consolidados de uma data específica
 
 ## 🧱Arquitetura e Design
 
+A arquitetura do **LedgerFlow** foi concebida com base em princípios de **DDD (Domain-Driven Design)** e **Clean Architecture**, priorizando modularidade, escalabilidade e resiliência.  
+Ela é sustentada por decisões arquiteturais registradas formalmente em **ADRs (Architectural Decision Records)**, que documentam o racional técnico por trás das escolhas de design do sistema — desde o padrão de microsserviços até as estratégias de segurança, observabilidade e escalabilidade.
+
+Essas decisões podem ser consultadas em detalhes no arquivo:
+
+📘 [ADRs.md](./docs/ADRs.md)
+
 
 ### C4 Diagrams
 
@@ -72,7 +79,7 @@ O diagrama abaixo apresenta a visão C4 de Nível 2 (App/Container) do sistema L
 
 As WebApis e o Keycloak estão preparadas para execução em Kubernetes (K8s), promovendo escalabilidade, isolamento de responsabilidades e resiliência.
 
-<img src="./ledgerflow-app-diagram.png" alt="LedgerFlow App Diagram" width="800">
+<img src="docs/ledgerflow-app-diagram.png" alt="LedgerFlow App Diagram" width="800">
 
 
 🔗 [Explorar o diagrama no IcePanel](https://s.icepanel.io/5EJNqZk1BJKyQN/cv24)
