@@ -17,7 +17,6 @@ public static class DependencyInjection
         builder.Services.AddEndpoints();
         builder.AddHealthChecks();
         builder.Services.AddProblemDetails();
-        builder.AddOutputCache();
         builder.Services.AddOpenApi();
         builder.AddJwtBearerAuthentication();
     }
@@ -25,7 +24,6 @@ public static class DependencyInjection
     {
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseOutputCache();//precisa ser antes do MapEndpoints e depois da authenticação
         app.MapEndpoints();
         app.MapHealthChecks();
         if (app.Environment.IsDevelopment())
@@ -88,21 +86,6 @@ public static class DependencyInjection
 
                 await context.Response.WriteAsync(result);
             }
-        });
-    }
-    private static void AddOutputCache(this WebApplicationBuilder builder)
-    {
-        builder.Services.AddOutputCache(options =>
-        {
-            options.AddPolicy("per-user", policy =>
-            {
-                policy.VaryByValue(context =>
-                {
-                    var username = context.User.FindFirst("preferred_username")?.Value ?? "anonymous";
-                    return new KeyValuePair<string, string>(nameof(username), username);
-                });
-                policy.Expire(TimeSpan.FromSeconds(30));
-            });
         });
     }
     private static void AddJwtBearerAuthentication(this WebApplicationBuilder builder)
