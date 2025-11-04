@@ -1,0 +1,13 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: transaction-api
+  labels:
+    app.kubernetes.io/name: transaction-api
+    app.kubernetes.io/part-of: transaction-api-project
+    kubernetes.azure.com/generator: devhub
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: transaction-api
