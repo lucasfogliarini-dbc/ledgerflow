@@ -1,10 +1,10 @@
-﻿using LedgerFlow.LedgerSummaries.WebApi;
+﻿using LedgerFlow.Infrastructure;
+using LedgerFlow.LedgerSummaries.WebApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
-using System.Reflection;
 using System.Text.Json;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -66,7 +66,7 @@ public static class DependencyInjection
     }
     private static void MapHealthChecks(this WebApplication app)
     {
-        var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
+        var serviceInfo = ServiceInfo.Get();
         app.MapHealthChecks("/health", new HealthCheckOptions
         {
             Predicate = _ => true, 
@@ -76,7 +76,8 @@ public static class DependencyInjection
 
                 var result = JsonSerializer.Serialize(new
                 {
-                    version,
+                    serviceInfo.Name,
+                    serviceInfo.Version,
                     app.Environment.EnvironmentName,
                     status = report.Status.ToString(),
                     checks = report.Entries.Select(entry => new

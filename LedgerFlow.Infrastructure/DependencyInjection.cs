@@ -52,12 +52,10 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static void AddOpenTelemetryExporter(this IHostApplicationBuilder builder)
         {
-            var assemblyName = Assembly.GetEntryAssembly()?.GetName();
-            var serviceName = assemblyName?.Name ?? "Unknown Service Name";
-            var serviceVersion = assemblyName?.Version?.ToString() ?? "Unknown Version";
+            var serviceInfo = ServiceInfo.Get();
 
             builder.Services.AddOpenTelemetry()
-                .ConfigureResource(rb => rb.AddService(serviceName, null, serviceVersion))
+                .ConfigureResource(rb => rb.AddService(serviceInfo.Name, null, serviceInfo.Version))
                 .WithTracing(tracerBuilder =>
                 {
                     tracerBuilder
