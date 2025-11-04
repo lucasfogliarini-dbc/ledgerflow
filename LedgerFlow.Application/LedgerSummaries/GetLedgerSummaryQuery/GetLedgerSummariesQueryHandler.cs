@@ -23,4 +23,3 @@ public class GetLedgerSummariesQueryHandler(ILedgerSummaryRepository ledgerSumma
 
 public record GetLedgerSummariesQuery(DateTime ReferenceDate) : IQuery<GetLedgerSummariesResponse>;
 public record GetLedgerSummariesResponse(DateTime ReferenceDate, IEnumerable<LedgerSummaryResponse> LedgerSummaries);
-public record LedgerSummaryResponse(DateTime ReferenceDate, decimal Balance, decimal TotalCredits, decimal TotalDebits);

@@ -7,7 +7,7 @@ internal sealed class ConsolidateLedgerEndpoint : IEndpoint
 {
     public async Task<IResult> ConsolidateLedgerAsync(
         ConsolidateLedgerRequest request,
-        ICommandHandler<ConsolidateLedgerCommand> handler,
+        ICommandHandler<ConsolidateLedgerCommand, LedgerSummaryResponse> handler,
         CancellationToken cancellationToken = default)
     {
         var command = new ConsolidateLedgerCommand(request.ReferenceDate);
@@ -15,8 +15,8 @@ internal sealed class ConsolidateLedgerEndpoint : IEndpoint
 
         if (result.IsFailure)
             return Results.BadRequest(result.Error);
-
-        return Results.Ok();
+        
+        return Results.Ok(result.Value);
     }
 
     public IEndpointConventionBuilder MapEndpoint(IEndpointRouteBuilder app)
