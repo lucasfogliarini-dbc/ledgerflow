@@ -4,7 +4,7 @@ Este documento registra as principais decisões arquiteturais tomadas durante o 
 
 ---
 
-## 1. Padrão Arquitetural: Microsserviços Independentes
+## 1. Padrão Arquitetural: Múltiplas WebAPIs sobre um monólito modular
 **Decisão:** Adotar dois serviços independentes – `Transactions API` e `LedgerSummaries API`.
 
 **Motivação:**  
@@ -104,19 +104,6 @@ Demanda infraestrutura e conhecimento operacional de K8s, mas viabiliza escalabi
 
 **Motivação:**  
 Assegurar qualidade, confiabilidade e performance, com verificação contínua em diferentes níveis da aplicação.
-
----
-
-## 10. Escalabilidade e Resiliência
-**Decisão:** Planejar suporte a até **50 requisições/segundo** no serviço de consolidação, com **tolerância de 5% de perda**.
-
-**Motivação:**  
-Atender ao requisito não funcional do desafio, assegurando comportamento estável sob carga.
-
-**Evolução futura:**  
-Implementar cache de resultados, filas assíncronas e estratégias de retry para maximizar throughput e disponibilidade.
-
----
 
 📚 **Resumo:**  
 O **LedgerFlow** foi concebido para ser modular, escalável e resiliente. As decisões priorizam clareza, segurança e capacidade de evolução — com espaço aberto para incrementos em observabilidade, mensageria e processamento assíncrono conforme o sistema amadurece.

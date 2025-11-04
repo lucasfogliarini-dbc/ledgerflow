@@ -1,7 +1,7 @@
 ﻿# LedgerFlow
 
 O LedgerFlow é um sistema de gestão financeira projetado para registrar lançamentos de débito e crédito e gerar consolidações diárias de saldo.
-A solução adota uma arquitetura moderna baseada em DDD (Domain-Driven Design), com foco em escalabilidade, resiliência e desacoplamento de serviços, promovendo uma base sólida para evolução contínua e confiável.
+A solução adota uma arquitetura moderna baseada em DDD (Domain-Driven Design), com foco em escalabilidade, resiliência e separação de responsabilidades, promovendo uma base sólida para evolução contínua e confiável.
 
 A arquitetura contempla dois principais serviços e uma aplicação front-end que integra as funcionalidades em uma experiência unificada:
 
@@ -66,8 +66,9 @@ O momento de definir essas funcionalidades é também um ponto crucial de alinha
 
 ## 🧱Arquitetura e Design
 
-A arquitetura do **LedgerFlow** foi concebida com base em princípios de **DDD (Domain-Driven Design)** e **Clean Architecture**, priorizando modularidade, escalabilidade e resiliência.  
-Ela é sustentada por decisões arquiteturais registradas formalmente em **ADRs (Architectural Decision Records)**, que documentam o racional técnico por trás das escolhas de design do sistema, desde o padrão de microsserviços até as estratégias de segurança, observabilidade e escalabilidade.
+A arquitetura do LedgerFlow foi concebida com base em princípios de DDD (Domain-Driven Design) e Clean Architecture, priorizando modularidade, separação de responsabilidades e evolução contínua.
+Trata-se de um monólito modular, em que cada módulo, como Transactions e LedgerSummaries é isolado logicamente, mas compartilha a mesma base de dados, permitindo simplicidade operacional e alta coesão interna.
+As decisões arquiteturais foram registradas formalmente em ADRs (Architectural Decision Records), documentando o racional técnico por trás das escolhas de design, incluindo estratégias de segurança, observabilidade e escalabilidade que pavimentam o caminho para uma futura migração a uma arquitetura distribuída.
 
 Essas decisões podem ser consultadas em detalhes no arquivo:
 
