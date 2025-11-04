@@ -1,19 +1,101 @@
 ﻿# LedgerFlow
 
-LedgerFlow é uma solução desenvolvida para controle e consolidação de lançamentos financeiros diários (débitos e créditos). O projeto foi criado com foco em escalabilidade, resiliência e boas práticas de arquitetura de software — aplicando princípios de DDD, separação de contextos e testes automatizados.
+LedgerFlow é uma solução desenvolvida para controle e consolidação de lançamentos financeiros diários (débitos e créditos). O projeto foi criado com foco em escalabilidade, resiliência e boas práticas de arquitetura de software, aplicando princípios de DDD, separação de contextos e testes automatizados.
 
-A arquitetura contempla dois principais serviços:
+A arquitetura contempla dois principais serviços e uma aplicação front-end que integra as funcionalidades em uma experiência unificada:
 
-* **Serviço de Lançamentos (Transactions API):** responsável pelos débitos e créditos do fluxo de caixa.
-* **Serviço de Consolidação (LedgerSummaries API):** gera o saldo consolidado diário(ou do momento) com base nas transações registradas.
+- Aplicação Web (LedgerFlow Web): interface web, onde o comerciante interage com o sistema para lançar movimentações, consultar saldos e visualizar o consolidado. Ela se comunica com as APIs autenticadas via Keycloak, garantindo segurança e uma experiência fluida de uso.
+- Serviço de Lançamentos (Transactions API): responsável pelos débitos e créditos do fluxo de caixa.
+- Serviço de Consolidação (LedgerSummaries API): gera o saldo consolidado com base nas transações registradas.
+
 
 ---
 
 ## Resumo
-- [🧩 Setup](#setup)
+
+A leitura do projeto segue uma sequência lógica que reflete o raciocínio de construção da solução: primeiro, apresentam-se as funcionalidades, que estabelecem o propósito e o domínio do sistema; depois, a arquitetura e o design, que mostram as decisões técnicas que sustentam essas funcionalidades; em seguida, o setup, detalhando como executar o ambiente; e, por fim, os testes, que validam o comportamento e a qualidade da implementação.
+
 - [⚙️ Funcionalidades](#funcionalidades)
-- [🧪 Testes](#testes)
 - [🧱 Arquitetura e Design](#arquitetura-e-design)
+- [🧩 Setup](#setup)
+- [🧪 Testes](#testes)
+
+## ⚙️Funcionalidades
+
+As funcionalidades descritas a seguir representam o coração do sistema LedgerFlow e foram expressas em formato [Gherkin](https://cucumber.io/docs/gherkin/reference), facilitando o entendimento comum entre negócio, desenvolvimento e qualidade. Esse formato torna explícito o comportamento esperado do sistema, conectando histórias de usuário à implementação de forma verificável.
+
+O momento de definir essas funcionalidades é também um ponto crucial de alinhamento entre especialistas de domínio e de modelagem, quando se traduz o conhecimento do negócio em linguagem técnica.
+
+É nesse estágio que o [EventStorming](https://www.eventstorming.com/) pode desempenhar papel fundamental para a modelagem de __sistemas complexos__, promovendo uma visão compartilhada do fluxo de eventos, identificando comandos, agregados e fronteiras de contexto que darão forma à arquitetura do sistema.
+
+```gherkin
+  Cenário: Criar uma transação de crédito com valores válidos
+    Dado que o usuário informa um valor maior que zero
+    Quando o sistema cria uma transação de crédito
+    Então a transação deve ser registrada com sucesso
+    E o tipo deve ser "Credit"
+    E a data de criação deve ser registrada automaticamente
+```
+
+```gherkin
+ Cenário: Criar uma transação de débito com valores válidos
+    Dado que o usuário informa um valor maior que zero
+    Quando o sistema cria uma transação de débito
+    Então a transação deve ser registrada com sucesso
+    E o tipo deve ser "Debit"
+    E a data de criação deve ser registrada automaticamente
+```
+
+```gherkin
+ Cenário: Consolidação de Saldos (saldo, créditos e débitos)
+    Dado que existe uma lista de transações válidas (créditos e débitos)
+    Quando o usuário solicitar a consolidação dos saldos
+    Então o sistema deve calcular e salvar o total de créditos, débitos e saldo.
+```
+
+```gherkin
+Cenário: Obter Saldos Consolidados de uma data específica
+    Dado que o usuário informa uma data de referência válida
+    E existam Saldos Consolidados para essa data
+    Quando o sistema processa a requisição de consulta
+    Então o sistema retornar todos os Saldos Consoliados com seus respectivos saldos, totais de créditos e débitos e data e hora
+```
+
+---
+
+## 🧱Arquitetura e Design
+
+
+### C4 Diagrams
+
+O diagrama abaixo apresenta a visão C4 de Nível 2 (App/Container) do sistema LedgerFlow, ilustrando os principais componentes, suas responsabilidades e interações dentro do ecossistema.
+
+As WebApis e o Keycloak estão preparadas para execução em Kubernetes (K8s), promovendo escalabilidade, isolamento de responsabilidades e resiliência.
+
+<img src="./ledgerflow-app-diagram.png" alt="LedgerFlow App Diagram" width="800">
+
+
+🔗 [Explorar o diagrama no IcePanel](https://s.icepanel.io/5EJNqZk1BJKyQN/cv24)
+
+<small>Explore para navegar interativamente pelo diagrama, visualizar as conexões entre os componentes e até subir para o Nível 1 (System Context Diagram)</small>
+
+### Domain-Driven Design e Clean Architecture
+
+A solução foi desenhada seguindo princípios de **Domain-Driven Design (DDD)** e **Clean Architecture**, com clara separação entre camadas:
+
+* **LedgerFlow** — projeto de domínio, contém entidades, agregados, eventos de domínio e regras de negócio.
+* **LedgerFlow.Infrastructure** — abstrações de persistência, mapeamentos e contexto EF Core.
+* **LedgerFlow.Application** — implementa os casos de uso da aplicação, comandos, consultas e orquestração das regras de negócio.
+* **LedgerFlow.Transactions.WebApi** — expõe os endpoints responsáveis pelo registro e consulta de transações (créditos e débitos).
+* **LedgerFlow.LedgerSummaries.WebApi** — expõe os endpoints responsáveis pela consolidação e consulta dos saldos diários.
+
+#### Referências
+
+- [Domain-Driven Design: Tackling Complexity in the Heart of Software, Eric Evans, 2003](http://chatgpt.com/?q=Livro%20Domain-Driven%20Design,%20Eric%20Evans)
+- [Projetar um microsserviço orientado a DDD, Learn Microsoft](https://learn.microsoft.com/pt-br/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/ddd-oriented-microservice)
+- [Clean Archicteture Template, Milan Jovanovic](https://github.com/lucasfogliarini/clean-architecture-m-jovanovic)
+
+---
 
 ## 🧩Setup
 
@@ -55,43 +137,6 @@ O sistema utiliza o **Keycloak** como provedor de identidade.
 
 ---
 
-## ⚙️Funcionalidades
-
-```gherkin
-  Cenário: Criar uma transação de crédito com valores válidos
-    Dado que o usuário informa um valor maior que zero
-    Quando o sistema cria uma transação de crédito
-    Então a transação deve ser registrada com sucesso
-    E o tipo deve ser "Credit"
-    E a data de criação deve ser registrada automaticamente
-```
-
-```gherkin
- Cenário: Criar uma transação de débito com valores válidos
-    Dado que o usuário informa um valor maior que zero
-    Quando o sistema cria uma transação de débito
-    Então a transação deve ser registrada com sucesso
-    E o tipo deve ser "Debit"
-    E a data de criação deve ser registrada automaticamente
-```
-
-```gherkin
- Cenário: Consolidação e lançamentos (saldo, créditos e débitos)
-    Dado que existe uma lista de transações válidas (créditos e débitos)
-    Quando o usuário solicitar a consolidação de lançamentos
-    Então o sistema deve calcular o total de créditos, débitos e saldo.
-```
-
-```gherkin
-Cenário: Obter relatórios consolidados de uma data específica
-    Dado que o usuário informa uma data de referência válida
-    E existam relatórios consolidados cadastrados para essa data
-    Quando o sistema processa a requisição de consulta
-    Então o sistema retornar a lista de relatórios com seus respectivos saldos, totais de créditos e débitos e data e hora de referência
-```
-
----
-
 ## 🧪Testes
 
 ### Testes unitários
@@ -129,38 +174,3 @@ Para medir o desempenho das APIs, utilize o script configurado em `k6.js` na rai
 cd LedgerFlow
 k6 run k6.js
 ```
-
----
-
-## 🧱Arquitetura e Design
-
-
-### C4 Diagrams
-
-O diagrama abaixo apresenta a visão C4 de Nível 2 (App/Container) do sistema LedgerFlow, ilustrando os principais componentes, suas responsabilidades e interações dentro do ecossistema.
-
-As WebApis e o Keycloak estão preparadas para execução em Kubernetes (K8s), promovendo escalabilidade, isolamento de responsabilidades e resiliência.
-
-<img src="./ledgerflow-app-diagram.png" alt="LedgerFlow App Diagram" width="800">
-
-
-🔗 [Explorar o diagrama no IcePanel](https://s.icepanel.io/5EJNqZk1BJKyQN/cv24)
-
-<small>Explore para navegar interativamente pelo diagrama, visualizar as conexões entre os componentes e até subir para o Nível 1 (System Context Diagram)</small>
-
-### Domain-Driven Design e Clean Architecture
-
-A solução foi desenhada seguindo princípios de **Domain-Driven Design (DDD)** e **Clean Architecture**, com clara separação entre camadas:
-
-* **LedgerFlow** — projeto de domínio, contém entidades, agregados, eventos de domínio e regras de negócio.
-* **LedgerFlow.Infrastructure** — abstrações de persistência, mapeamentos e contexto EF Core.
-* **LedgerFlow.Application** — implementa os casos de uso da aplicação, comandos, consultas e orquestração das regras de negócio.
-* **LedgerFlow.Transactions.WebApi** — expõe os endpoints responsáveis pelo registro e consulta de transações (créditos e débitos).
-* **LedgerFlow.LedgerSummaries.WebApi** — expõe os endpoints responsáveis pela consolidação e consulta dos saldos diários.
-
-#### Referências
-
-- [Domain-Driven Design: Tackling Complexity in the Heart of Software, Eric Evans, 2003](http://chatgpt.com/?q=Livro%20Domain-Driven%20Design,%20Eric%20Evans)
-- [Projetar um microsserviço orientado a DDD, Learn Microsoft](https://learn.microsoft.com/pt-br/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/ddd-oriented-microservice)
-
----
