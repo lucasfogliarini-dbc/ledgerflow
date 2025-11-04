@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
 using System.Reflection;
 using System.Text.Json;
 
@@ -141,7 +142,7 @@ public static class DependencyInjection
             .GetSection(nameof(RedisSettings))
             .Get<RedisSettings>();
 
-        if (redisSettings is null || string.IsNullOrWhiteSpace(redisSettings.Configuration))
+        if (redisSettings is null || string.IsNullOrWhiteSpace(redisSettings.Configuration) || !IsRedisAvailable(redisSettings.Configuration))
         {
             builder.Services.AddDistributedMemoryCache();
             return;
@@ -153,6 +154,23 @@ public static class DependencyInjection
             options.InstanceName = redisSettings.InstanceName ?? "LedgerFlow:";
         });
         builder.Services.AddHealthChecks().AddRedis(redisSettings.Configuration, "redis-ledgerflow");
+    }
+    private static bool IsRedisAvailable(string configuration)
+    {
+        var logger = LoggerFactory.Create(b => b.AddConsole()).CreateLogger("Startup");
+        try
+        {
+            using var connection = ConnectionMultiplexer.Connect(configuration);
+            var db = connection.GetDatabase();
+            var pong = db.Ping();
+            logger.LogInformation("Redis respondeu ao ping em {Elapsed} ms.", pong.TotalMilliseconds);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Falha ao conectar ao Redis ({Config})", configuration);
+            return false;
+        }
     }
     public record RedisSettings(string? Configuration, string? InstanceName = null);
 }
